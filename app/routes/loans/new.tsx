@@ -1,5 +1,5 @@
 import { ActionFunction, redirect, Link } from "remix";
-import { badRequest } from "~/utils";
+import { http } from "~/utils";
 
 export const action: ActionFunction = async ({ request }) => {
   const form = await request.formData();
@@ -41,12 +41,8 @@ export const action: ActionFunction = async ({ request }) => {
   };
   console.log("Fields", fields);
 
-  const res = await fetch(`http://localhost:8082/api/loans`, {
-    method: "POST",
-    body: JSON.stringify(fields),
-  });
-  const json = await res.json();
-  console.log("json", json);
+  const res = await http.post("/loans", fields);
+  console.log("json", res.data);
 
   return redirect("/loans");
   // return redirect("/loans/new");

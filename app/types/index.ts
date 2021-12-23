@@ -2,6 +2,7 @@ export type Loan = {
   id: string;
   lenderId: string;
   borrowerId?: string;
+  status: "pending" | "active" | "late" | "defaulted"; // TODO: UPDATE THESE
   name: string;
   county: string;
   state: string;
@@ -18,4 +19,12 @@ export type Loan = {
   defaultAfter: number;
   servicingFee: number;
   startDate: string;
+};
+
+export type User = {
+  id: string;
+  role: "lender" | "borrower";
+  email: string;
+  subscriptionPlan?: "basic" | "pro";
+  subscriptionStatus?: "active" | "cancelled";
 };

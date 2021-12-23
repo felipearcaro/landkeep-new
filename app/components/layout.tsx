@@ -18,14 +18,31 @@ import {
 } from "@heroicons/react/solid";
 import { NavLink, Link } from "remix";
 
-const navigation = [
-  { name: "Home", href: "/", icon: HomeIcon, current: true },
-  { name: "Loans", href: "/loans", icon: BriefcaseIcon, current: false },
+interface NavigationLink {
+  name: string;
+  href: string;
+  icon: React.FC;
+  prefetch: "none" | "intent" | "render";
+}
+
+const navigation: NavigationLink[] = [
+  { name: "Home", href: "/", icon: HomeIcon, prefetch: "none" },
+  { name: "Loans", href: "/loans", icon: BriefcaseIcon, prefetch: "intent" },
 ];
 const secondaryNavigation = [
-  { name: "Settings", href: "/settings", icon: CogIcon },
-  { name: "Help", href: "/help", icon: QuestionMarkCircleIcon },
-  { name: "Privacy", href: "/privacy", icon: ShieldCheckIcon },
+  { name: "Settings", href: "/settings", icon: CogIcon, prefetch: "none" },
+  {
+    name: "Help",
+    href: "/help",
+    icon: QuestionMarkCircleIcon,
+    prefetch: "none",
+  },
+  {
+    name: "Privacy",
+    href: "/privacy",
+    icon: ShieldCheckIcon,
+    prefetch: "none",
+  },
 ];
 
 function classNames(...classes: string[]) {
@@ -104,6 +121,7 @@ export default function Layout({ children }: LayoutProps) {
                     <NavLink
                       key={item.name}
                       to={item.href}
+                      prefetch={item.prefetch}
                       className={({ isActive }) =>
                         classNames(
                           isActive
@@ -112,7 +130,7 @@ export default function Layout({ children }: LayoutProps) {
                           "group flex items-center px-2 py-2 text-base font-medium rounded-md"
                         )
                       }
-                      aria-current={item.current ? "page" : undefined}
+                      // aria-current={item.current ? "page" : undefined}
                     >
                       <item.icon
                         className="mr-4 flex-shrink-0 h-6 w-6 text-cyan-200"
@@ -168,6 +186,7 @@ export default function Layout({ children }: LayoutProps) {
                 <NavLink
                   key={item.name}
                   to={item.href}
+                  prefetch={item.prefetch}
                   className={({ isActive }) =>
                     classNames(
                       isActive
@@ -176,7 +195,7 @@ export default function Layout({ children }: LayoutProps) {
                       "group flex items-center px-2 py-2 text-base font-medium rounded-md"
                     )
                   }
-                  aria-current={item.current ? "page" : undefined}
+                  // aria-current={item.current ? "page" : undefined}
                 >
                   <item.icon
                     className="mr-4 flex-shrink-0 h-6 w-6 text-cyan-200"
@@ -387,7 +406,7 @@ export default function Layout({ children }: LayoutProps) {
             </div>
           </div>
 
-          <div className="py-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
+          <div className="py-4 sm:px-6 lg:px-8 lg:max-w-7xl mx-auto">
             {children}
           </div>
         </main>
