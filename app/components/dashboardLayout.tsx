@@ -26,20 +26,30 @@ interface NavigationLink {
 }
 
 const navigation: NavigationLink[] = [
-  { name: "Home", href: "/", icon: HomeIcon, prefetch: "none" },
-  { name: "Loans", href: "/loans", icon: BriefcaseIcon, prefetch: "intent" },
+  { name: "Home", href: "/dashboard", icon: HomeIcon, prefetch: "none" },
+  {
+    name: "Loans",
+    href: "/dashboard/loans",
+    icon: BriefcaseIcon,
+    prefetch: "intent",
+  },
 ];
 const secondaryNavigation = [
-  { name: "Settings", href: "/settings", icon: CogIcon, prefetch: "none" },
+  {
+    name: "Settings",
+    href: "/dashboard/settings",
+    icon: CogIcon,
+    prefetch: "none",
+  },
   {
     name: "Help",
-    href: "/help",
+    href: "/dashboard/help",
     icon: QuestionMarkCircleIcon,
     prefetch: "none",
   },
   {
     name: "Privacy",
-    href: "/privacy",
+    href: "/dashboard/privacy",
     icon: ShieldCheckIcon,
     prefetch: "none",
   },
@@ -53,7 +63,7 @@ interface LayoutProps {
   children: React.ReactNode;
 }
 
-export default function Layout({ children }: LayoutProps) {
+export default function DashboardLayout({ children }: LayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (

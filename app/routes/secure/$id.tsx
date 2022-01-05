@@ -420,7 +420,7 @@ export default function SecureLoan() {
               <div className="h-16 flex items-center justify-between">
                 {/* Logo (lg+) */}
                 <div className="hidden lg:flex-1 lg:flex lg:items-center">
-                  <Link to="/">
+                  <Link to="/dashboard">
                     <span className="sr-only">Workflow</span>
                     <img
                       className="h-8 w-auto"
@@ -557,7 +557,7 @@ export default function SecureLoan() {
                 </div>
 
                 {/* Logo (lg-) */}
-                <Link to="/" className="lg:hidden">
+                <Link to="/dashboard" className="lg:hidden">
                   <span className="sr-only">Workflow</span>
                   <img
                     src="https://tailwindui.com/img/logos/workflow-mark.svg?color=indigo&shade=600"

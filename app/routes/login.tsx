@@ -1,8 +1,11 @@
 import { ActionFunction, json, Link, redirect } from "remix";
 import { cognito } from "~/aws-exports";
+import { authenticator } from "~/services/auth.server";
 import { storage } from "~/utils/session.server";
 
 export let action: ActionFunction = async ({ request }) => {
+  return await authenticator.authenticate("cognito", request);
+
   let formData = await request.formData();
 
   const email = formData.get("email");
