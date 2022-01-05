@@ -1,4 +1,58 @@
-import { Link } from "remix";
+import { ActionFunction, json, Link, redirect } from "remix";
+import { cognito } from "~/aws-exports";
+import { storage } from "~/utils/session.server";
+
+export let action: ActionFunction = async ({ request }) => {
+  let formData = await request.formData();
+
+  const email = formData.get("email");
+  const password = formData.get("password");
+  console.log("email", email);
+  console.log("password", password);
+
+  if (typeof email !== "string") {
+    return json("Invalid email address!", { status: 400 });
+  }
+  if (typeof password !== "string") {
+    return json("Invalid password!", { status: 400 });
+  }
+  if (!process.env.COGNITO_CLIENT_ID) {
+    throw new Error("Could not find AWS Cognito Client ID.");
+  }
+
+  try {
+    const resp = await cognito
+      .initiateAuth({
+        AuthFlow: "USER_PASSWORD_AUTH",
+        ClientId: process.env.COGNITO_CLIENT_ID,
+        AuthParameters: {
+          USERNAME: email,
+          PASSWORD: password,
+        },
+      })
+      .promise();
+    console.log("resp", resp);
+    if (!resp.AuthenticationResult) {
+      throw new Error("Did not receive a valid AuthenticationResult.");
+    }
+    const { IdToken, RefreshToken } = resp?.AuthenticationResult;
+
+    const session = await storage.getSession();
+    session.set("accessToken", IdToken);
+    session.set("refreshToken", RefreshToken);
+
+    return redirect("/", {
+      headers: {
+        "Set-Cookie": await storage.commitSession(session),
+      },
+    });
+  } catch (error) {
+    console.log("Error:", error);
+    return json("We encountered an issue creating your account.", {
+      status: 500,
+    });
+  }
+};
 
 export default function Login() {
   return (

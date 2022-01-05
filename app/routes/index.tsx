@@ -1,6 +1,8 @@
 import { ScaleIcon } from "@heroicons/react/outline";
 import { CashIcon, ChevronRightIcon } from "@heroicons/react/solid";
+import { LoaderFunction, redirect } from "remix";
 import Layout from "~/components/layout";
+import { storage } from "~/utils/session.server";
 
 const cards = [
   { name: "Account balance", href: "#", icon: ScaleIcon, amount: "$30,659.45" },
@@ -27,6 +29,15 @@ const statusStyles = {
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
+
+export const loader: LoaderFunction = async ({ params }) => {
+  const session = await storage.getSession();
+  const { accessToken } = session;
+
+  if (!accessToken) {
+    return redirect("/login");
+  }
+};
 
 export default function Index() {
   return (

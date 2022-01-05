@@ -3,52 +3,44 @@ import { cognito } from "~/aws-exports";
 
 export let action: ActionFunction = async ({ request }) => {
   let formData = await request.formData();
-  console.log("formData", formData);
 
-  const name = formData.get("name");
   const email = formData.get("email");
   const password = formData.get("password");
+  const confirmPassword = formData.get("confirm_password");
+  console.log("email", email);
+  console.log("password", password);
+  console.log("confirmPassword", confirmPassword);
 
-  // Typical action workflows start with validating the form data that just came
-  // over the network. Clientside validation is fine, but you definitely need it
-  // server side.  If there's a problem, return the the data and the component
-  // can render it.
-  if (typeof name !== "string") {
-    return json("Come on, at least try!", { status: 400 });
-  }
   if (typeof email !== "string") {
-    return json("Come on, at least try!", { status: 400 });
+    return json("Invalid email address!", { status: 400 });
   }
   if (typeof password !== "string") {
-    return json("Come on, at least try!", { status: 400 });
+    return json("Invalid password!", { status: 400 });
+  }
+  if (password !== confirmPassword) {
+    return json("Passwords must match!", { status: 400 });
+  }
+  console.log("process.env.COGNITO_CLIENT_ID", process?.env?.COGNITO_CLIENT_ID);
+  if (!process.env.COGNITO_CLIENT_ID) {
+    throw new Error("Could not find AWS Cognito Client ID.");
   }
 
   try {
     const resp = await cognito
       .signUp({
-        ClientId: "76do5tknjshlpm34j72jlh1m9f",
+        ClientId: process.env.COGNITO_CLIENT_ID,
         Username: email,
         Password: password,
-        UserAttributes: [
-          {
-            Name: "name",
-            Value: name,
-          },
-        ],
       })
       .promise();
     console.log("resp", resp);
   } catch (error) {
-    console.log("error signing up:", error);
+    console.log("Error:", error);
     return json("We encountered an issue creating your account.", {
       status: 500,
     });
   }
 
-  // Finally, if the data is valid, you'll typically write to a database or send or
-  // email or log the user in, etc. It's recommended to redirect after a
-  // successful action, even if it's to the same place so that non-JavaScript workflows
-  // from the browser doesn't repost the data if the user clicks back.
   return redirect("/");
 };
 
