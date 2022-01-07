@@ -2,7 +2,8 @@ import { json } from "remix";
 import axios from "axios";
 
 export const http = axios.create({
-  baseURL: "http://localhost:8082/api",
+  // baseURL: "http://localhost:8082/api",
+  baseURL: "https://api.dev.landkeep.com/v1",
 });
 
 export const classNames = (...classes: string[]) => {

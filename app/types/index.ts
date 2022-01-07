@@ -27,4 +27,6 @@ export type User = {
   email: string;
   subscriptionPlan?: "basic" | "pro";
   subscriptionStatus?: "active" | "cancelled";
+  createdAt: string;
+  deleteAt: string;
 };

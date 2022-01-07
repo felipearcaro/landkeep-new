@@ -5,9 +5,9 @@ if (!sessionSecret) {
   throw new Error("SESSION_SECRET must be set");
 }
 
-export const sessionStorage = createCookieSessionStorage({
+export const storage = createCookieSessionStorage({
   cookie: {
-    name: "_landkeep_session", // use any name you want here
+    name: "_lk_session", // use any name you want here
     sameSite: "lax", // this helps with CSRF
     path: "/", // remember to add this so the cookie will work in all routes
     maxAge: 60 * 60 * 24 * 30,

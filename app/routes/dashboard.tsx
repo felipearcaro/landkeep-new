@@ -1,15 +1,12 @@
-import { LoaderFunction, Outlet } from "remix";
+import { json, LoaderFunction, Outlet, redirect } from "remix";
 import DashboardLayout from "~/components/dashboardLayout";
-import { authenticator } from "~/services/auth.server";
-import { sessionStorage } from "~/services/session.server";
+import { storage } from "~/services/session.server";
 
 export const loader: LoaderFunction = async ({ request }) => {
-  const session = await sessionStorage.getSession();
-  console.log("session info", session.get(authenticator.sessionKey));
+  const session = await storage.getSession(request.headers.get("Cookie"));
 
-  return await authenticator.isAuthenticated(request, {
-    failureRedirect: "/login",
-  });
+  if (!session.has("user")) return redirect("/login");
+  else return json(200);
 };
 
 export default function Dashboard() {

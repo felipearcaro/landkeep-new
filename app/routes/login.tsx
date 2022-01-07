@@ -1,11 +1,7 @@
-import { ActionFunction, json, Link, redirect } from "remix";
-import { cognito } from "~/aws-exports";
-import { authenticator } from "~/services/auth.server";
-import { storage } from "~/utils/session.server";
+import { ActionFunction, json, Link } from "remix";
+import { login } from "~/services/auth.server";
 
 export let action: ActionFunction = async ({ request }) => {
-  return await authenticator.authenticate("cognito", request);
-
   let formData = await request.formData();
 
   const email = formData.get("email");
@@ -24,31 +20,7 @@ export let action: ActionFunction = async ({ request }) => {
   }
 
   try {
-    const resp = await cognito
-      .initiateAuth({
-        AuthFlow: "USER_PASSWORD_AUTH",
-        ClientId: process.env.COGNITO_CLIENT_ID,
-        AuthParameters: {
-          USERNAME: email,
-          PASSWORD: password,
-        },
-      })
-      .promise();
-    console.log("resp", resp);
-    if (!resp.AuthenticationResult) {
-      throw new Error("Did not receive a valid AuthenticationResult.");
-    }
-    const { IdToken, RefreshToken } = resp?.AuthenticationResult;
-
-    const session = await storage.getSession();
-    session.set("accessToken", IdToken);
-    session.set("refreshToken", RefreshToken);
-
-    return redirect("/", {
-      headers: {
-        "Set-Cookie": await storage.commitSession(session),
-      },
-    });
+    return login(email, password);
   } catch (error) {
     console.log("Error:", error);
     return json("We encountered an issue creating your account.", {

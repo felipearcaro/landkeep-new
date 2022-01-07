@@ -31,6 +31,12 @@ export let action: ActionFunction = async ({ request }) => {
         ClientId: process.env.COGNITO_CLIENT_ID,
         Username: email,
         Password: password,
+        UserAttributes: [
+          {
+            Name: "custom:role",
+            Value: "lender",
+          },
+        ],
       })
       .promise();
     console.log("resp", resp);
@@ -41,7 +47,7 @@ export let action: ActionFunction = async ({ request }) => {
     });
   }
 
-  return redirect("/");
+  return redirect("/login");
 };
 
 export default function Signup() {
