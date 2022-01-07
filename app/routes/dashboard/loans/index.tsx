@@ -10,6 +10,7 @@ import { Loan } from "~/types";
 import { classNames, http, toUSD } from "~/utils";
 import { useState } from "react";
 import Layout from "~/components/layout";
+import { storage } from "~/services/session.server";
 
 const candidates = [
   {
@@ -32,8 +33,17 @@ const countDefaulted = (loans: Loan[]) =>
 const countGoodStanding = (loans: Loan[]) =>
   loans.filter((l) => l.status === "active").length;
 
-export const loader: LoaderFunction = async () => {
-  const res = await http.get(`/loans`);
+export const loader: LoaderFunction = async ({ request }) => {
+  const session = await storage.getSession(request.headers.get("Cookie"));
+  const accessToken = session.get("accessToken");
+  console.log("accessToken", accessToken);
+
+  const res = await http.get(`/loans`, {
+    headers: {
+      Authorization: `${accessToken}`,
+    },
+  });
+  console.log("res.data", res.data);
   return res.data;
 };
 
